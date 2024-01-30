@@ -1,8 +1,6 @@
 import Header from "../../components/header";
 
 function LandingPage() {
-  // add a header
-
   return (
     <>
       <Header />
