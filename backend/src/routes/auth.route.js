@@ -11,6 +11,7 @@ import {
   register,
   forgotPassword,
   newPassword,
+  activateCode,
   verifyCode,
 } from "../controllers/auth.controller.js";
 import { validateMiddleware } from "../middlewares/validate.middleware.js";
@@ -25,10 +26,12 @@ authRoute.post(
   forgotPassword
 );
 authRoute.put(
-  "/verify/:id/:code",
+  "/activate/:id/:code",
 
-  verifyCode
+  activateCode
 );
+
+authRoute.get("/verify/:id/:code", verifyCode);
 
 authRoute.put(
   "/new-password/:id/:code",

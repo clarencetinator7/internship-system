@@ -63,7 +63,7 @@ const sendEmailVerification = async (action, id, email, code) => {
   }:
   <br>
   ${process.env.CLIENT_URL}/${
-    action === "register" ? "verify" : "new-password"
+    action === "register" ? "activate" : "new-password"
   }/${id}/${code}
   
   `;

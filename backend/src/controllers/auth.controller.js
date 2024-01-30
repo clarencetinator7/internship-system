@@ -159,9 +159,9 @@ const newPassword = asyncHandler(async (req, res) => {
   }
 });
 
-// @route   PUT /auth/new-password/:id/:code
+// @route   PUT /auth/activate/:id/:code
 // @access  Private
-const verifyCode = asyncHandler(async (req, res, next) => {
+const activateCode = asyncHandler(async (req, res, next) => {
   const { id, code } = req.params;
 
   const [result] = await pool.query(
@@ -183,4 +183,34 @@ const verifyCode = asyncHandler(async (req, res, next) => {
   });
 });
 
-export { login, register, forgotPassword, newPassword, verifyCode };
+// @route   GET /auth/verify/:id/:code
+// @access  Private
+const verifyCode = asyncHandler(async (req, res, next) => {
+  const { id, code } = req.params;
+
+  const [result] = await pool.query(
+    "SELECT * FROM users WHERE userId = ? AND verificationCode = ? AND codeExpiration > NOW()",
+    [id, code]
+  );
+
+  if (result.length === 0) {
+    return res.status(403).json({
+      success: false,
+      message: "Not authorized.",
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "Authorized",
+  });
+});
+
+export {
+  login,
+  register,
+  forgotPassword,
+  newPassword,
+  activateCode,
+  verifyCode,
+};
