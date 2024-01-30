@@ -41,7 +41,8 @@ const login = asyncHandler(async (req, res) => {
         console.log(rows[0].email);
         res.status(200).json({
           success: true,
-          message: "A verification code has been sent to your email.",
+          message:
+            "To be able to use your account, please activate it first by clicking the link sent to your email.",
         });
       }
     }
@@ -87,7 +88,8 @@ const register = asyncHandler(async (req, res) => {
     if (isSent) {
       res.status(200).json({
         success: true,
-        message: "A verification code has been sent to your email.",
+        message:
+          "To be able to use your account, please activate it first by clicking the link sent to your email.",
       });
     }
   }
@@ -128,7 +130,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
     if (isSent) {
       res.status(200).json({
         success: true,
-        message: "A verification code has been sent to your email.",
+        message: "To be able to change your password, please check your email.",
       });
     }
   }
@@ -176,7 +178,8 @@ const verifyCode = asyncHandler(async (req, res, next) => {
 
   return res.status(200).json({
     success: true,
-    message: "Authorization successful.",
+    message:
+      "Your account has been activated. You can now login to your account.",
   });
 });
 
