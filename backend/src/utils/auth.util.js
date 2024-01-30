@@ -58,14 +58,20 @@ const checkPassword = async (user, password) => {
 };
 
 const sendEmailVerification = async (action, id, email, code) => {
+  const message = `Click the link below to ${
+    action === "register" ? "activate your account" : "reset your account"
+  }:
+  <br>
+  ${process.env.CLIENT_URL}/${
+    action === "register" ? "verify" : "new-password"
+  }/${id}/${code}
+  
+  `;
   return await createEmail(
     process.env.MY_EMAIL || "",
-    "darwinsanluis.ramos14@gmail.com",
-    "EMAIL VERIFICATION",
-    `${process.env.CLIENT_URL}/${
-      action === "register" ? "verify" : "new-password"
-    }/${id}/${code}
-    `
+    email,
+    action === "register" ? "ACTIVATE ACCOUNT" : "RESET PASSWORD",
+    message
   );
 };
 

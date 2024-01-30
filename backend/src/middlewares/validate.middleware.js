@@ -16,9 +16,9 @@ const validateMiddleware = (schemas) => {
       formattedErrors[error.path] = error.msg;
     });
 
-    res.status(403).json({
+    res.status(422).json({
       success: false,
-      errors: formattedErrors,
+      error: formattedErrors,
     });
   };
 };
