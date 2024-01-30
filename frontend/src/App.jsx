@@ -1,9 +1,14 @@
-import LoginPage from "./pages/Login/LoginPage";
+import "./App.css";
 
-export default function App() {
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routers/router";
+
+function App() {
   return (
-    <div className="bg-body-secondary">
-      <LoginPage></LoginPage>;
-    </div>
+    <>
+      <RouterProvider router={router} />
+    </>
   );
 }
+
+export default App;
