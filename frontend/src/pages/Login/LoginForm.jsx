@@ -2,7 +2,6 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useForm } from "react-hook-form";
 
-import { setItem } from "localforage";
 import { login } from "../../../services/authQuery";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -15,9 +14,11 @@ function LoginForm() {
     setError, // set error message manually, used for server errors
   } = useForm();
 
+  // TODO add redirect if user is already logged in
+
   const [serverRes, setServerRes] = useState();
 
-  const [isLoading, setIsLoading] = useState(false); // idle | "loading" | "error" | "success"
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -26,6 +27,7 @@ function LoginForm() {
     try {
       setIsLoading(true);
       const body = await login(data);
+
       console.log(body);
 
       setIsLoading(false);
@@ -48,20 +50,19 @@ function LoginForm() {
       }
 
       // 400 | 500 http status codes
-      if (!body?.status) {
+      if (body.status) {
         setServerRes(body?.error?.stack);
+        return;
       }
 
       // unverified account
-      if (body.success && body?.token === undefined) {
+      // FIXME make better way to handle user not verified
+      if (body.success && body.message !== "Login successful.") {
         setServerRes(body?.message);
         return;
       }
 
-      // save the token using localforge
-      const token = body.jwt;
-      await setItem("token", token);
-
+      console.log("success");
       navigate("/dashboard");
     } catch (error) {
       setServerRes(error?.message);

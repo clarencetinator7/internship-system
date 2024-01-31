@@ -1,7 +1,6 @@
 const LOGIN_ENDPOINT = "http://127.0.0.1:5000/api/auth/login";
 
 export const login = async ({ identifier, password }) => {
-  // send a request.
   const reqBody = {
     identifier,
     password,
@@ -11,7 +10,8 @@ export const login = async ({ identifier, password }) => {
     headers: {
       "Content-Type": "application/json",
     },
-
+    // adds the cookies to the request.
+    credentials: "include",
     body: JSON.stringify(reqBody),
   });
 

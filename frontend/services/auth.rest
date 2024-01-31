@@ -1,0 +1,28 @@
+# https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+
+
+### Login the user
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+    "identifier": "{{$dotenv IDENTIFIER}}",
+    "password":  "{{$dotenv PASSWORD}}"
+
+}
+
+
+
+### Make a post request to register a user
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+    "userId": "",
+    "firstName": "",
+    "lastName": "",
+    "username": "",
+    "email": "",
+    "password": "",
+    "confirmPassword": ""
+}
