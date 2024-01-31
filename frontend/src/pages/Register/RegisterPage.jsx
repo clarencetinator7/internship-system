@@ -19,7 +19,22 @@ const RegisterPage = () => {
       <div className={styles.card}>
         <h1>Register</h1>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <Row className="mb-3">
+          <Row className="mb-2">
+            <Form.Group as={Col} controlId="groupUserId">
+              <Form.Label>User ID</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter user ID"
+                {...register("userId", { required: true })}
+              />
+              {errors.userId && (
+                <Form.Text className="text-danger">
+                  User ID is required
+                </Form.Text>
+              )}
+            </Form.Group>
+          </Row>
+          <Row className="mb-2">
             <Form.Group as={Col} controlId="groupFirstName">
               <Form.Label>First Name</Form.Label>
               <Form.Control
@@ -47,7 +62,22 @@ const RegisterPage = () => {
               )}
             </Form.Group>
           </Row>
-          <Row className="mb-3">
+          <Row className="mb-2">
+            <Form.Group as={Col} controlId="groupUsername">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter username"
+                {...register("username", { required: true })}
+              />
+              {errors.username && (
+                <Form.Text className="text-danger">
+                  Username is required
+                </Form.Text>
+              )}
+            </Form.Group>
+          </Row>
+          <Row className="mb-2">
             <Form.Group as={Col} controlId="groupEmail">
               <Form.Label>Email</Form.Label>
               <Form.Control
@@ -68,7 +98,7 @@ const RegisterPage = () => {
               )}
             </Form.Group>
           </Row>
-          <Row className="mb-3">
+          <Row className="mb-2">
             <Form.Group as={Col} controlId="groupPassword">
               <Form.Label>Password</Form.Label>
               <Form.Control
@@ -83,7 +113,7 @@ const RegisterPage = () => {
               )}
             </Form.Group>
           </Row>
-          <Row className="mb-3">
+          <Row className="mb-2">
             <Form.Group as={Col} controlId="groupConfirmPassword">
               <Form.Label>Confirm Password</Form.Label>
               <Form.Control
