@@ -19,6 +19,10 @@ export const router = createBrowserRouter([
         path: "register",
         element: <div>Hello World</div>,
       },
+      {
+        path: "dashboard",
+        element: <h1 className="bg-white">Dashboard</h1>,
+      },
     ],
   },
 ]);
