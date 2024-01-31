@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Container from "react-bootstrap/Container";
-import { Form, Row, Col, Button } from "react-bootstrap";
+import { Form, Row, Col, Button, Alert } from "react-bootstrap";
 import styles from "./RegisterPage.module.css";
 
 const RegisterPage = () => {
@@ -10,14 +11,41 @@ const RegisterPage = () => {
     formState: { errors },
   } = useForm();
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(null);
+
   const onSubmit = (data) => {
-    console.log(data);
+    setIsLoading(true);
+
+    fetch(`http://localhost:3000/api/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setIsSuccess(data.success);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
     <Container className={styles.container}>
       <div className={styles.card}>
         <h1>Register</h1>
+        {isSuccess === true && (
+          <Alert variant="success">
+            Verification link has been sent to your email. Please check your
+            inbox to activate your account.
+          </Alert>
+        )}
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Row className="mb-2">
             <Form.Group as={Col} controlId="groupUserId">
@@ -128,8 +156,8 @@ const RegisterPage = () => {
               )}
             </Form.Group>
           </Row>
-          <Button variant="primary" type="submit">
-            Register
+          <Button variant="primary" type="submit" disabled={isLoading}>
+            {isLoading ? "Loading..." : "Register"}
           </Button>
         </Form>
       </div>

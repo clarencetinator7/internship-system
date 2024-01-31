@@ -1,6 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import RegisterPage from "../pages/Register/RegisterPage";
-import VerifyEmailPage from "../pages/VerifyEmailPage/VerifyEmailPage";
+import VerifyEmailPage, {
+  VerifyEmailPageLoader,
+} from "../pages/VerifyEmailPage/VerifyEmailPage";
 
 export const router = createBrowserRouter([
   // Sample index path
@@ -13,7 +15,8 @@ export const router = createBrowserRouter([
     element: <RegisterPage />,
   },
   {
-    path: "/:id/verify-email",
+    path: "/activate/:id/:code",
     element: <VerifyEmailPage />,
+    loader: VerifyEmailPageLoader,
   },
 ]);

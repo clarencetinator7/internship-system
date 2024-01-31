@@ -1,26 +1,34 @@
 import styles from "./VerifyEmailPage.module.css";
-import { Button, Form } from "react-bootstrap";
+import { redirect } from "react-router-dom";
+// import { Button, Form } from "react-bootstrap";
 
 const VerifyEmailPage = () => {
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <h1>Verify Email</h1>
+        <h1>Email Verification Failed</h1>
         <p>
-          A verification email has been sent to your email. Please check your
-          inbox and enter the code below to activate your account.
+          Seems like the verification link is invalid or expired. Please try
+          again later.
         </p>
-        <Form>
-          <Form.Control type="text" placeholder="Enter verification code" />
-          <div className="d-grid mt-3">
-            <Button variant="primary" type="submit">
-              Verify Email
-            </Button>
-          </div>
-        </Form>
       </div>
     </div>
   );
 };
+
+export async function VerifyEmailPageLoader({ params }) {
+  const { id, code } = params;
+  const response = await fetch(
+    `http://localhost:3000/api/auth/activate/${id}/${code}`,
+    { method: "PUT" }
+  );
+  const data = await response.json();
+
+  if (data.success) {
+    return redirect("/login");
+  }
+
+  return null;
+}
 
 export default VerifyEmailPage;
