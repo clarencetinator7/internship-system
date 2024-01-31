@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { setItem } from "localforage";
 import { login } from "../../../services/authQuery";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 function LoginForm() {
   const {
@@ -14,20 +15,18 @@ function LoginForm() {
     setError, // set error message manually, used for server errors
   } = useForm();
 
+  const [serverRes, setServerRes] = useState();
+
   const navigate = useNavigate();
 
   const submitHandler = async (data) => {
+    setServerRes(null);
     try {
       const body = await login(data);
       console.log(body);
 
-      // if it doesn't have a cookie, check if the response has an email verification code
-      // if it has an email verification code, redirect to the email verification page
-      // if it doesn't have an email verification code, display the error message
-
-      // check if the response is 422 (input validation error)
+      // the response is 422 (input validation error)
       if (!body?.success) {
-        // get the error message from the response
         const errorObject = body?.error;
         if (errorObject.identifier)
           setError("identifier", {
@@ -43,20 +42,36 @@ function LoginForm() {
         return;
       }
 
+      // 400 | 500 http status codes
+      if (!body?.status) {
+        setServerRes(body?.error?.stack);
+      }
+
+      if (body.success && body?.token === undefined) {
+        setServerRes(body?.message);
+        return;
+      }
+
       // save the token using localforge
       const token = body.jwt;
       await setItem("token", token);
 
       navigate("/dashboard");
-
-      return data;
     } catch (error) {
+      setServerRes(error?.message);
       console.log(error);
     }
   };
 
   return (
     <Form noValidate onSubmit={handleSubmit(submitHandler)}>
+      {/* displays general error */}
+      {serverRes && (
+        <p role="alert" className="alert alert-danger">
+          {serverRes}
+        </p>
+      )}
+
       <Form.Group className="mb-3" controlId="formBasicIdentifier">
         <Form.Label>Email Address:</Form.Label>
         <Form.Control
