@@ -24,7 +24,7 @@ const validateLogin = [
     .withMessage("Password is required")
     .bail()
     .custom(async (password, { req }) => {
-      const identifier = req.check.identifier;
+      const identifier = req.body.identifier;
 
       const [rows] = await pool.query(
         "SELECT * FROM users WHERE username = ? OR email = ?",
@@ -49,7 +49,6 @@ const validateRegister = [
   check("firstName").notEmpty().withMessage("First name is required"),
   check("lastName").notEmpty().withMessage("Last name is required"),
   check("username").notEmpty().withMessage("Username is required"),
-
   check("email")
     .notEmpty()
     .withMessage("Email is required")
@@ -96,7 +95,7 @@ const validateRegister = [
     .withMessage("Confirm Password is required")
     .bail()
     .custom((value, { req }) => {
-      if (value !== req.check.password) {
+      if (value !== req.body.password) {
         throw new Error("Passwords do not match");
       }
       return true;
@@ -111,16 +110,36 @@ const validateNewPassword = [
     .isLength({ min: 8, max: 16 })
     .withMessage("Password must be between 8 and 16 characters")
     .bail()
-    .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/, "i")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&,*._])(?=.*\d).{8,16}$/, "i")
     .withMessage(
       "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-    ),
+    )
+    .bail()
+    .custom(async (password, { req }) => {
+      const { id, code } = req.params;
+      const [rows] = await pool.query(
+        "SELECT * FROM users WHERE userId = ? AND verificationCode = ? AND codeExpiration > NOW()",
+        [id, code]
+      );
+      if (rows.length > 0) {
+        const user = rows[0];
+        if (user) {
+          const isPasswordValid = await checkPassword(user, password);
+
+          if (isPasswordValid) {
+            throw new Error("Password cannot be the same as the old password");
+          }
+        }
+      }
+      return true;
+    }),
+
   check("confirmPassword")
     .notEmpty()
     .withMessage("Confirm Password is required")
     .bail()
     .custom((value, { req }) => {
-      if (value !== req.check.password) {
+      if (value !== req.body.password) {
         throw new Error("Passwords do not match");
       }
       return true;
