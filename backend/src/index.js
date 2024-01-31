@@ -7,11 +7,11 @@ import multer from "multer";
 import { authRoute } from "./routes/auth.route.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 
-const PORT = process.env.PORT || 3000;
+dotenv.config();
+const PORT = process.env.PORT;
 
 const app = express();
 const upload = multer();
-dotenv.config();
 
 app.use(
   cors({
@@ -27,7 +27,7 @@ app.use(upload.none());
 
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/auth", authRoute);
+app.use("/api/auth", authRoute);
 
 app.use(errorMiddleware);
 app.listen(PORT, () => {

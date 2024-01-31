@@ -29,8 +29,7 @@ const login = asyncHandler(async (req, res) => {
       "UPDATE users SET verificationCode = ?, codeExpiration = ? WHERE username = ? OR email = ?",
       [code, expiration, identifier, identifier]
     );
-    console.log(rows);
-    console.log(rows[0].userId);
+
     if (result.affectedRows > 0) {
       const isSent = await sendEmailVerification(
         "register",
@@ -39,9 +38,11 @@ const login = asyncHandler(async (req, res) => {
         code
       );
       if (isSent) {
+        console.log(rows[0].email);
         res.status(200).json({
           success: true,
-          message: "A verification code has been sent to your email.",
+          message:
+            "To be able to use your account, please activate it first by clicking the link sent to your email.",
         });
       }
     }
@@ -80,14 +81,15 @@ const register = asyncHandler(async (req, res) => {
       expiration,
     ]
   );
-  console.log(code);
+
   if (result.affectedRows > 0) {
     const isSent = await sendEmailVerification("register", userId, email, code);
 
     if (isSent) {
       res.status(200).json({
         success: true,
-        message: "A verification code has been sent to your email.",
+        message:
+          "To be able to use your account, please activate it first by clicking the link sent to your email.",
       });
     }
   }
@@ -128,7 +130,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
     if (isSent) {
       res.status(200).json({
         success: true,
-        message: "A verification code has been sent to your email.",
+        message: "To be able to change your password, please check your email.",
       });
     }
   }
@@ -146,7 +148,6 @@ const newPassword = asyncHandler(async (req, res) => {
     [hashedPassword, 0, id, code]
   );
 
-  console.log(id, code);
   if (result.affectedRows > 0) {
     return res.status(200).json({
       success: true,
@@ -158,12 +159,14 @@ const newPassword = asyncHandler(async (req, res) => {
   }
 });
 
-const verifyCode = asyncHandler(async (req, res, next) => {
+// @route   PUT /auth/activate/:id/:code
+// @access  Private
+const activateCode = asyncHandler(async (req, res, next) => {
   const { id, code } = req.params;
-  console.log(id, code);
+
   const [result] = await pool.query(
-    "UPDATE users SET accountStatus = ? WHERE userId = ? AND verificationCode = ? AND codeExpiration > NOW()",
-    ["verified", id, code]
+    "UPDATE users SET verificationCode = ?,  accountStatus = ? WHERE userId = ? AND verificationCode = ? AND codeExpiration > NOW()",
+    [0, "verified", id, code]
   );
 
   if (result.length === 0) {
@@ -173,10 +176,41 @@ const verifyCode = asyncHandler(async (req, res, next) => {
     });
   }
 
-  return res.status(405).json({
+  return res.status(200).json({
     success: true,
-    message: "Authorization successful.",
+    message:
+      "Your account has been activated. You can now login to your account.",
   });
 });
 
-export { login, register, forgotPassword, newPassword, verifyCode };
+// @route   GET /auth/verify/:id/:code
+// @access  Private
+const verifyCode = asyncHandler(async (req, res, next) => {
+  const { id, code } = req.params;
+
+  const [result] = await pool.query(
+    "SELECT * FROM users WHERE userId = ? AND verificationCode = ? AND codeExpiration > NOW()",
+    [id, code]
+  );
+
+  if (result.length === 0) {
+    return res.status(403).json({
+      success: false,
+      message: "Not authorized.",
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "Authorized",
+  });
+});
+
+export {
+  login,
+  register,
+  forgotPassword,
+  newPassword,
+  activateCode,
+  verifyCode,
+};
