@@ -17,13 +17,18 @@ function LoginForm() {
 
   const [serverRes, setServerRes] = useState();
 
+  const [isLoading, setIsLoading] = useState(false); // idle | "loading" | "error" | "success"
+
   const navigate = useNavigate();
 
   const submitHandler = async (data) => {
     setServerRes(null);
     try {
+      setIsLoading(true);
       const body = await login(data);
       console.log(body);
+
+      setIsLoading(false);
 
       // the response is 422 (input validation error)
       if (!body?.success) {
@@ -47,6 +52,7 @@ function LoginForm() {
         setServerRes(body?.error?.stack);
       }
 
+      // unverified account
       if (body.success && body?.token === undefined) {
         setServerRes(body?.message);
         return;
@@ -59,6 +65,7 @@ function LoginForm() {
       navigate("/dashboard");
     } catch (error) {
       setServerRes(error?.message);
+      setIsLoading(false);
       console.log(error);
     }
   };
@@ -116,8 +123,8 @@ function LoginForm() {
         <Form.Check type="checkbox" label="Remember Me" />
       </Form.Group>
 
-      <Button variant="primary" type="submit">
-        Submit
+      <Button disabled={isLoading} variant="primary" type="submit">
+        {isLoading ? "Loading..." : "Login"}
       </Button>
     </Form>
   );
