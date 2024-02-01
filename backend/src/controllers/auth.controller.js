@@ -169,7 +169,7 @@ const activateCode = asyncHandler(async (req, res, next) => {
     [0, "verified", id, code]
   );
 
-  if (result.length === 0) {
+  if (result.affectedRows === 0) {
     return res.status(403).json({
       success: false,
       message: "Not authorized.",
@@ -193,7 +193,7 @@ const verifyCode = asyncHandler(async (req, res, next) => {
     [id, code]
   );
 
-  if (result.length === 0) {
+  if (result.affectedRows === 0) {
     return res.status(403).json({
       success: false,
       message: "Not authorized.",
