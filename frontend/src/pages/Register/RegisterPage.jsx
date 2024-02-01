@@ -8,16 +8,25 @@ const RegisterPage = () => {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(null);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    if (data.password !== data.confirmPassword) {
+      setError("confirmPassword", {
+        type: "manual",
+        message: "Password does not match",
+      });
+      return;
+    }
+
     setIsLoading(true);
 
-    fetch(`http://localhost:3000/api/auth/register`, {
+    await fetch(`http://localhost:3000/api/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,7 +35,16 @@ const RegisterPage = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        setIsSuccess(data.success);
+        if (data.success) return setIsSuccess(true);
+
+        if (data.error) {
+          for (const [key, value] of Object.entries(data.error)) {
+            setError(key, {
+              type: "manual",
+              message: value,
+            });
+          }
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -57,7 +75,7 @@ const RegisterPage = () => {
               />
               {errors.userId && (
                 <Form.Text className="text-danger">
-                  User ID is required
+                  {errors.userId.message}
                 </Form.Text>
               )}
             </Form.Group>
@@ -72,7 +90,7 @@ const RegisterPage = () => {
               />
               {errors.firstName && (
                 <Form.Text className="text-danger">
-                  First Name is required
+                  {errors.firstName.message || "First Name is required"}
                 </Form.Text>
               )}
             </Form.Group>
@@ -85,7 +103,7 @@ const RegisterPage = () => {
               />
               {errors.lastName && (
                 <Form.Text className="text-danger">
-                  Last Name is required
+                  {errors.lastName.message || "Last Name is required"}
                 </Form.Text>
               )}
             </Form.Group>
@@ -100,7 +118,7 @@ const RegisterPage = () => {
               />
               {errors.username && (
                 <Form.Text className="text-danger">
-                  Username is required
+                  {errors.username.message || "Username is required"}
                 </Form.Text>
               )}
             </Form.Group>
@@ -136,7 +154,7 @@ const RegisterPage = () => {
               />
               {errors.password && (
                 <Form.Text className="text-danger">
-                  Password is required
+                  {errors.password.message || "Password is required"}
                 </Form.Text>
               )}
             </Form.Group>
@@ -151,7 +169,8 @@ const RegisterPage = () => {
               />
               {errors.confirmPassword && (
                 <Form.Text className="text-danger">
-                  Password is required
+                  {errors.confirmPassword.message ||
+                    "Confirm Password is required"}
                 </Form.Text>
               )}
             </Form.Group>
