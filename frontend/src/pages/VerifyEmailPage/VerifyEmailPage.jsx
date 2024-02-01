@@ -1,17 +1,30 @@
+import { useLoaderData } from "react-router-dom";
+import { Alert } from "react-bootstrap";
 import styles from "./VerifyEmailPage.module.css";
-import { redirect } from "react-router-dom";
 // import { Button, Form } from "react-bootstrap";
 
 const VerifyEmailPage = () => {
+  const { success } = useLoaderData();
+
   return (
     <div className={styles.container}>
-      <div className={styles.card}>
-        <h1>Email Verification Failed</h1>
-        <p>
-          Seems like the verification link is invalid or expired. Please try
-          again later.
-        </p>
-      </div>
+      {success ? (
+        <Alert variant="success" className={styles.card}>
+          <h1>Email Verified</h1>
+          <p>
+            Your email has been verified. You can now{" "}
+            <a href="/login">login to your account</a>
+          </p>
+        </Alert>
+      ) : (
+        <Alert variant="danger" className={styles.card}>
+          <h1>Email Verification Failed</h1>
+          <p>
+            Seems like the verification link is invalid or expired. Please try
+            again later.
+          </p>
+        </Alert>
+      )}
     </div>
   );
 };
@@ -22,13 +35,8 @@ export async function VerifyEmailPageLoader({ params }) {
     `http://localhost:3000/api/auth/activate/${id}/${code}`,
     { method: "PUT" }
   );
-  const data = await response.json();
 
-  if (data.success) {
-    return redirect("/login");
-  }
-
-  return null;
+  return response;
 }
 
 export default VerifyEmailPage;
