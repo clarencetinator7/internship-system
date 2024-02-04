@@ -33,8 +33,18 @@ POST http://localhost:5000/api/auth/forgot-password
 Content-Type: application/json
 
 {
-    "identifier": "wilhelmjanmapogi@gmail.com"
+    "identifier": "{{$dotenv IDENTIFIER}}"
 
 }
 
 
+
+### Reset Password
+PUT  http://localhost:5000/api/auth/new-password/202010223/4e872fc41797b5893702badc1f5f1b3a5e59651b
+Content-Type: application/json
+
+{
+    "password": "{{$dotenv USER_PASSWORD}}",
+    "id" : "{{$dotenv USER_ID}}",
+    "code":""
+}

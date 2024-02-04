@@ -6,6 +6,7 @@ import VerifyEmailPage, {
   VerifyEmailPageLoader,
 } from "../pages/VerifyEmailPage/VerifyEmailPage";
 import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
+import NewPassword from "../pages/NewPassword/NewPassword"; // NewPasswordLoader,
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
   {
     path: "/forgot-password",
     element: <ForgotPassword />,
+  },
+  {
+    path: "/new-password/:id/:code",
+    element: <NewPassword />,
   },
   {
     path: "/register",
