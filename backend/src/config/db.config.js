@@ -1,4 +1,7 @@
 import mysql from "mysql2";
+//TODO check why dotenv is not working without importing it here again
+import dotenv from "dotenv";
+dotenv.config();
 
 const pool = mysql
   .createPool({
