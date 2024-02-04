@@ -14,8 +14,6 @@ function LoginForm() {
     setError, // set error message manually, used for server errors
   } = useForm();
 
-  // TODO add redirect if user is already logged in
-
   const [serverRes, setServerRes] = useState();
 
   const [isLoading, setIsLoading] = useState(false);

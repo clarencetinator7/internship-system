@@ -1,3 +1,6 @@
+.mainContent {
+  min-height: 80vh;
+}
 #root {
   /* TODO add better place to put this later  */
   min-height: 100vh;

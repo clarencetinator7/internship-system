@@ -9,20 +9,16 @@ import VerifyEmailPage, {
 export const router = createBrowserRouter([
   {
     path: "/",
-    children: [
-      {
-        index: true,
-        element: <LandingPage />,
-      },
-      {
-        path: "login",
-        element: <LoginPage />,
-      },
-      {
-        path: "dashboard",
-        element: <h1 className="bg-white">Dashboard</h1>,
-      },
-    ],
+    element: <LandingPage />,
+    index: true,
+  },
+  {
+    path: "dashboard",
+    element: <h1 className="bg-white">Dashboard</h1>,
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
   },
   {
     path: "/register",
